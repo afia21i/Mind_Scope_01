@@ -3,6 +3,9 @@ from .fallback_responses import get_fallback_response
 import logging
 import requests
 
+
+
+
 logger = logging.getLogger(__name__)
 
 def generate_intelligent_response(user_message, history_messages=None):
@@ -25,9 +28,12 @@ def generate_intelligent_response(user_message, history_messages=None):
                 "inputs": f"User: {user_message}\nAssistant:",
                 "parameters": {"max_length": 150, "temperature": 0.7}
             },
-            timeout=5
+           
+           timeout = 5
         )
-        
+
+
+
         if response.status_code == 200:
             result = response.json()
             if isinstance(result, list) and len(result) > 0:
