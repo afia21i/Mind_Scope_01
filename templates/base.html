@@ -16,9 +16,10 @@
       <div class="nav-left">
         {% block back_button %}
         <!-- Back Button -->
-        <a href="javascript:history.back()" class="back-btn">
-          ←
-        </a>
+       <a href="{% url 'landingpage' %}" 
+   onclick="if(document.referrer && document.referrer !== window.location.href){ window.location=document.referrer; return false; }" 
+   class="back-btn">←</a>
+
         {% endblock %}
 
         <div class="logo">
@@ -29,18 +30,15 @@
       </div>
 
       <div class="nav-right">
-        <nav>
-          <ul>
-            <li><a href="{% url 'login' %}">Login</a></li>
-            <li><a href="{% url 'signup' %}">Signup</a></li>
-          </ul>
-        </nav>
+  <nav>
+    <ul>
+      <li><a href="{% url 'login' %}" class="btn-nav white">Login</a></li>
+      <li><a href="{% url 'signup' %}" class="btn-nav black">Sign Up</a></li>
+    </ul>
+  </nav>
+</div>
 
-        <div class="language-switch">
-          <button class="lang-btn">ENG</button>
-          <button class="lang-btn">বাংলা</button>
-        </div>
-      </div>
+
     </header>
 
     <!-- Page Content -->
@@ -49,5 +47,6 @@
     </main>
 
   </div>
+   {% include "pages/footer.html" %}
 </body>
 </html>

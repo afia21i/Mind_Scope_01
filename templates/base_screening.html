@@ -13,8 +13,9 @@
     <header class="navbar">
       <div class="nav-left">
   
-        <a href="javascript:history.back()" class="back-btn">←</a>
-
+       <a href="{% url 'landingpage' %}" 
+   onclick="if(document.referrer && document.referrer !== window.location.href){ window.location=document.referrer; return false; }" 
+   class="back-btn">←</a>
         <div class="logo">
           <a href="{% url 'home' %}">
             <img src="{% static 'images/logo.png' %}" alt="MindScope Logo">
@@ -26,15 +27,10 @@
         <nav>
           <ul>
             <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
+            <li><a href="{% url 'logout' %}" class="btn-nav black">Log Out</a></li>
+            
           </ul>
         </nav>
-
-        <div class="language-switch">
-          <button class="lang-btn">ENG</button>
-          <button class="lang-btn">বাংলা</button>
-        </div>
-      </div>
     </header>
 
    
@@ -43,5 +39,6 @@
     </main>
 
   </div>
+  {% include "pages/footer.html" %}
 </body>
 </html>

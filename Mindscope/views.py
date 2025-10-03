@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
 import logging
+import json
 
 from .models import Screening, MoodEntry, ChatMessage, WellnessTip
 from .utils.openai_client import generate_chat_response
@@ -69,17 +70,45 @@ def logout_view(request):
     return redirect("login")
 
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import MoodEntry, Screening
+from datetime import datetime
+
+import json
 @login_required
 def dashboard(request):
-    screenings = Screening.objects.filter(user=request.user).order_by("-date_taken")[:5]
-    moods = MoodEntry.objects.filter(user=request.user).order_by("-date_logged")[:7]
-    tips = WellnessTip.objects.all()[:3]
-    
+    moods = MoodEntry.objects.filter(user=request.user).order_by('-date_logged')
+    screenings = Screening.objects.filter(user=request.user).order_by('-date_taken')
+
+    # ✅ Chart Data
+    mood_dates = [m.date_logged.strftime('%b %d') for m in moods]
+    mood_scores = [m.score for m in moods]
+
+    # ✅ Calculate Wellness Score
+    wellness_score = None
+    if moods.exists():
+        avg_mood = sum(mood_scores) / len(mood_scores)
+    else:
+        avg_mood = 5  # neutral baseline
+
+    if screenings.exists():
+        last_screening = screenings.first()
+        # Inverse scaling: higher screening score = lower wellness
+        screening_factor = max(0, 10 - (last_screening.score / 3))  
+    else:
+        screening_factor = 5  # baseline
+
+    wellness_score = round((avg_mood * 0.6) + (screening_factor * 0.4), 1)
+
     return render(request, "pages/Dashboard.html", {
-        "screenings": screenings,
         "moods": moods,
-        "tips": tips,
+        "screenings": screenings,
+        "mood_dates_json": json.dumps(mood_dates),
+        "mood_scores_json": json.dumps(mood_scores),
+        "wellness_score": wellness_score,
     })
+
 
 
 @login_required
@@ -129,7 +158,6 @@ def phq9_view(request):
                 "Use wellness and crisis resources available",
             ]
 
-        # Save to DB
         Screening.objects.create(
             user=request.user,
             screening_type="PHQ9",
@@ -181,7 +209,6 @@ def gad7_view(request):
                 "Build a strong support system with trusted people",
             ]
 
-        # Save to DB
         Screening.objects.create(
             user=request.user,
             screening_type="GAD7",
@@ -237,7 +264,6 @@ def pss10_view(request):
                 "If you feel overwhelmed or unsafe, contact local crisis services or emergency help immediately.",
             ]
 
-        # Save to DB
         Screening.objects.create(
             user=request.user,
             screening_type="PSS10",
@@ -257,22 +283,39 @@ def pss10_view(request):
 # ---------------- Mood Tracker ----------------
 @login_required
 def mood_tracker(request):
+    influencers = [
+        "Work", "Family", "Exercise", "Sleep", "Social",
+        "Health", "Weather", "Money", "Travel", "Learning"
+    ]
+
     if request.method == "POST":
         mood = request.POST["mood"]
-        influencers = request.POST.get("influencers", "")
+        selected_influencers = ", ".join(request.POST.getlist("influencers"))
         notes = request.POST.get("notes", "")
         
         MoodEntry.objects.create(
             user=request.user,
             mood=mood,
-            influencers=influencers,
+            influencers=selected_influencers,
             notes=notes,
         )
         messages.success(request, "Mood logged successfully!")
-        return redirect("moodtracker")
-    
-    entries = MoodEntry.objects.filter(user=request.user).order_by("-date_logged")
-    return render(request, "pages/moodtracker.html", {"entries": entries})
+        return redirect("mood_tracker")
+
+    # fetch user’s past entries
+    entries = MoodEntry.objects.filter(user=request.user).order_by("date_logged")
+
+    dates = [entry.date_logged.strftime("%b %d") for entry in entries]
+    scores = [entry.score for entry in entries]
+
+    return render(request, "pages/mood_tracker.html", {
+        "entries": entries,
+        "mood_choices": MoodEntry.MOOD_CHOICES,
+        "influencers": influencers,   # ✅ pass influencers here
+        "dates": json.dumps(dates),
+        "scores": json.dumps(scores),
+    })
+
 
 
 # ---------------- AI Chatbot ----------------
@@ -284,7 +327,6 @@ def chat_view(request):
             messages.error(request, "Please enter a message.")
             return redirect("chat")
 
-        # Build conversation history
         recent_messages = ChatMessage.objects.filter(
             user=request.user
         ).order_by("-timestamp")[:6]
@@ -295,18 +337,15 @@ def chat_view(request):
             if msg.response:
                 history.append({"role": "assistant", "content": msg.response})
 
-        # Get AI response using the new hybrid approach
         try:
             from .utils.chat_engine import generate_intelligent_response
             ai_response = generate_intelligent_response(user_msg, history_messages=history)
         except Exception as e:
             logger.error(f"Error generating AI response: {e}")
-            # Fallback to basic response if everything fails
             from .utils.fallback_responses import get_fallback_response
             ai_response = get_fallback_response(user_msg)
             messages.info(request, "Using fallback responses due to technical issues.")
 
-        # Save to database
         ChatMessage.objects.create(
             user=request.user, 
             message=user_msg, 
@@ -315,9 +354,9 @@ def chat_view(request):
         
         return redirect("chat")
 
-    # Get chat history for display
     chats = ChatMessage.objects.filter(user=request.user).order_by("timestamp")
     return render(request, "pages/AIChatbot.html", {"chats": chats})
+
 
 def learn_more(request):
     return render(request, "pages/learn_more.html")

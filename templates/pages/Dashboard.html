@@ -1,0 +1,116 @@
+{% extends 'base_screening.html' %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-page">
+
+  <!-- Header (centered like Mood Tracker) -->
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Welcome to MindScope — Your Mental Health Journey Starts Here</p>
+  </div>
+
+  <!-- Grid Layout -->
+  <div class="dashboard-grid">
+
+    <!-- Wellness Box -->
+    <div class="dashboard-box wellness-box">
+      <h2>🌱 Wellness Score</h2>
+      <p class="big-number">{{ wellness_score }}/10</p>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:{{ wellness_score|floatformat:0 }}0%;"></div>
+      </div>
+      <p class="note">Based on moods + screenings</p>
+    </div>
+
+    <!-- Mood Entries -->
+    <div class="dashboard-box mood-box">
+      <h2>😊 Mood Entries</h2>
+      <p class="big-number">{{ moods.count }}</p>
+      <p class="note">Total logged so far</p>
+    </div>
+
+    <!-- Screenings -->
+    <div class="dashboard-box screening-box">
+      <h2>📝 Screenings</h2>
+      <p class="big-number">{{ screenings.count }}</p>
+      {% if screenings %}
+        <p class="note">Latest: {{ screenings.first.get_screening_type_display }}</p>
+        <span class="severity-badge {{ screenings.first.severity|lower }}">
+          {{ screenings.first.severity }}
+        </span>
+      {% else %}
+        <p class="note">No screenings yet</p>
+      {% endif %}
+    </div>
+
+    <!-- Mood Trends -->
+    <div class="dashboard-box chart-box">
+      <h2>📊 Mood Trends</h2>
+      {% if moods %}
+        <canvas id="moodChart"></canvas>
+      {% else %}
+        <p class="no-data">No mood data yet. <a href="{% url 'mood_tracker' %}">Log your first mood</a></p>
+      {% endif %}
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="dashboard-box activity-box">
+      <h2>🕒 Recent Activity</h2>
+      <ul>
+        {% if moods or screenings %}
+          {% for mood in moods|slice:":3" %}
+            <li class="activity mood">
+              💚 Mood Entry: <strong>{{ mood.mood }}</strong>
+              <span class="timestamp">{{ mood.date_logged|date:"M d, Y" }}</span>
+            </li>
+          {% endfor %}
+          {% for screening in screenings|slice:":2" %}
+            <li class="activity screening">
+              📋 {{ screening.get_screening_type_display }} —
+              <span class="severity-badge {{ screening.severity|lower }}">{{ screening.severity }}</span>
+              <span class="timestamp">{{ screening.date_taken|date:"M d, Y" }}</span>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li class="activity">No recent activity recorded.</li>
+        {% endif %}
+      </ul>
+    </div>
+
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+{% if moods %}
+  const ctx = document.getElementById('moodChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: {{ mood_dates_json|safe }},
+      datasets: [{
+        label: 'Mood Score',
+        data: {{ mood_scores_json|safe }},
+        borderColor: '#6c63ff',
+        backgroundColor: 'rgba(108,99,255,0.15)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true, max: 10 },
+        x: { ticks: { autoSkip: true, maxTicksLimit: 7 } }
+      },
+      plugins: {
+        legend: { display: true, position: 'top' },
+        title: { display: true, text: 'Your Mood Progress Over Time' }
+      }
+    }
+  });
+{% endif %}
+</script>
+{% endblock %}

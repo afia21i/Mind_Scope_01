@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mood Tracker | MindScope{% endblock %}
+
+{% block content %}
+<div class="mood-tracker-page">
+  <div class="mood-tracker-header">
+    <h1>Mood Tracker Dashboard</h1>
+    <p>Log your daily mood and visualize emotional trends over time.</p>
+  </div>
+
+  <div class="mood-tracker-grid">
+    <!-- Left: Log Mood -->
+    <div class="mood-card log-mood">
+      <h2>❤️ Log Today’s Mood</h2>
+
+      <form method="POST" action="">
+        {% csrf_token %}
+
+        <!-- Mood options -->
+        <label class="form-label">How are you feeling?</label>
+        <div class="mood-options">
+          {% for emoji, label in mood_choices %}
+            <label>
+              <input type="radio" name="mood" value="{{ emoji }}" required>
+              <span class="emoji">{{ emoji }}</span>
+            </label>
+          {% endfor %}
+        </div>
+
+        <!-- Influencers -->
+        <label class="form-label">What influenced your mood?</label>
+        <div class="influencer-tags">
+          {% for factor in influencers %}
+            <label>
+              <input type="checkbox" name="influencers" value="{{ factor }}">
+              <span>{{ factor }}</span>
+            </label>
+          {% endfor %}
+        </div>
+
+        <!-- Notes -->
+        <label class="form-label">Notes (optional)</label>
+        <textarea name="notes" rows="3" placeholder="Write something..."></textarea>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Save</button>
+          <a href="{% url 'home' %}" class="btn secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right: Mood Trends -->
+    <div class="mood-card mood-trends">
+      <h2>📊 Mood Trends</h2>
+      <p>Your mood over the past week</p>
+      <canvas id="moodChart"></canvas>
+    </div>
+  </div>
+
+  <!-- History Table -->
+  <div class="mood-history">
+    <h2>📜 Mood History</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Mood</th>
+          <th>Influencers</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in entries %}
+          <tr>
+            <td>{{ entry.date_logged|date:"M d, Y" }}</td>
+            <td>{{ entry.mood }}</td>
+            <td>{{ entry.influencers }}</td>
+            <td>{{ entry.notes|default:"-" }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4">No mood logs yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const ctx = document.getElementById('moodChart').getContext('2d');
+  const moodChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: {{ dates|safe }},
+      datasets: [{
+        label: 'Mood Score',
+        data: {{ scores|safe }},
+        borderColor: '#6c63ff',
+        backgroundColor: 'rgba(108, 99, 255, 0.1)',
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: '#6c63ff'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { min: 0, max: 10, ticks: { stepSize: 2 } } }
+    }
+  });
+</script>
+{% endblock %}

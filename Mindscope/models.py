@@ -27,11 +27,27 @@ class MoodEntry(models.Model):
         ("😴", "Tired"),
         ("😟", "Anxious"),
     ]
+
+    MOOD_SCORES = {
+        "😊": 8,
+        "😢": 3,
+        "😡": 2,
+        "😌": 7,
+        "😴": 5,
+        "😟": 4,
+    }
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="mood_entries")
     mood = models.CharField(max_length=10, choices=MOOD_CHOICES)
+    score = models.IntegerField(default=5)  # ✅ new field
     influencers = models.TextField(blank=True, help_text="Factors affecting mood")
     notes = models.TextField(blank=True, null=True)
     date_logged = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        # ✅ auto-assign score whenever a mood is saved
+        self.score = self.MOOD_SCORES.get(self.mood, 5)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username} - {self.mood} ({self.date_logged.date()})"
