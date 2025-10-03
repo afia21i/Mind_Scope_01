@@ -1,0 +1,52 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MindScope{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <div class="page-container">
+
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="nav-left">
+        {% block back_button %}
+        <!-- Back Button -->
+       <a href="{% url 'landingpage' %}" 
+   onclick="if(document.referrer && document.referrer !== window.location.href){ window.location=document.referrer; return false; }" 
+   class="back-btn">←</a>
+
+        {% endblock %}
+
+        <div class="logo">
+          <a href="{% url 'home' %}">
+            <img src="{% static 'images/logo.png' %}" alt="MindScope Logo">
+          </a>
+        </div>
+      </div>
+
+      <div class="nav-right">
+  <nav>
+    <ul>
+      <li><a href="{% url 'login' %}" class="btn-nav white">Login</a></li>
+      <li><a href="{% url 'signup' %}" class="btn-nav black">Sign Up</a></li>
+    </ul>
+  </nav>
+</div>
+
+
+    </header>
+
+    <!-- Page Content -->
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+   {% include "pages/footer.html" %}
+</body>
+</html>
