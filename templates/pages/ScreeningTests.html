@@ -1,0 +1,45 @@
+{% extends 'base_screening.html' %}
+
+{% block title %}Mental Health Screenings{% endblock %}
+
+{% block content %}
+<section class="screening-section">
+  <h1>Mental Health Screenings</h1>
+  <p class="subtitle">
+    Offers clinically validated tests like PHQ-9 (Depression),
+    GAD-7 (Anxiety), and PSS-10 (Stress) for quick self-assessment.
+  </p>
+
+  <div class="screening-grid">
+    <!-- Depression -->
+    <div class="screening-card">
+      <h3>📑 Depression</h3>
+      <p>
+        <strong>PHQ-9 Depression Screening</strong><br>
+        Patient Health Questionnaire for depression screening
+      </p>
+      <a href="{% url 'phq9' %}" class="btn-screen">Start Screening</a>
+    </div>
+
+    <!-- Stress -->
+    <div class="screening-card">
+      <h3>📑 Stress</h3>
+      <p>
+        <strong>Perceived Stress Scale (PSS-10)</strong><br>
+        Measures the degree to which situations are perceived as stressful
+      </p>
+      <a href="{% url 'pss10' %}" class="btn-screen">Start Screening</a>
+    </div>
+
+    <!-- Anxiety -->
+    <div class="screening-card">
+      <h3>📑 Anxiety</h3>
+      <p>
+        <strong>GAD-7 Anxiety Screening</strong><br>
+        Generalized Anxiety Disorder 7-item scale
+      </p>
+      <a href="{% url 'gad7' %}" class="btn-screen">Start Screening</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
