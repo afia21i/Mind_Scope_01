@@ -4,13 +4,64 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  }
+  
+  /* Navbar buttons */
+.btn-nav {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* Black button */
+.btn-nav.black {
+  background: #000;
+  color: #fff;
+}
+.btn-nav.black:hover {
+  background: #333;
+}
+
+/* White button */
+.btn-nav.white {
+  background: #fff;
+  border: 1px solid #ccc;
+  color: #000;
+}
+.btn-nav.white:hover {
+  background: #f3f4f6;
+}
+
+/* Greeting */
+.greeting {
+  font-weight: 600;
+  margin-right: 1rem;
+  color: #000;
+}
+
+ .footer {
+  background: rgba(0, 13, 11, 0.9);  /* slightly cleaner black */
+  color: #fff;
+  height: 60px;                      /* fixed height */
+  display: flex;                     /* use flexbox for centering */
+  justify-content: center;           /* center horizontally */
+  align-items: center;               /* center vertically */
+}
+
+.footer-bottom {
+  font-size: 0.9rem;
+  color: #ddd;                       /* softer grey instead of harsh white */
 }
 
 /* Page layout */
 html, body {
-    height: 100%;           /* full height layout */
-    overflow: hidden;       /* no scrollbars */
+    min-height: 100%;
+    overflow-x: hidden; /* allow vertical scroll, hide horizontal */
 }
+
 
 body {
     display: flex;
@@ -25,8 +76,11 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;   /* hero at top */
+    justify-content: flex-start;
+    padding-top: 90px;   /* ✅ ensures ALL pages clear the navbar */
+    box-sizing: border-box;
 }
+
 
 /* Navbar */
 .navbar {
@@ -95,6 +149,11 @@ body {
 .lang-btn:hover {
     background: #e5e7eb;
 }
+
+.home-container {
+    padding-top: 90px;   /* navbar (70px) + 20px spacing */
+}
+
 
 /* Hero Section */
 .hero {
@@ -1028,4 +1087,410 @@ body {
         font-size: 0.9rem;
         padding: 0.7rem;
     }
+}
+
+/* Navbar fixed */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+  height: 70px;
+}
+
+/* Mood Tracker Page */
+/* === Mood Tracker Page === */
+.mood-tracker-page {
+  padding: 2rem 5%;
+  min-height: 100vh;
+}
+
+/* Header */
+.mood-tracker-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.mood-tracker-header h1 {
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+.mood-tracker-header p {
+  color: #555;
+  font-size: 1rem;
+}
+
+/* Grid Layout */
+.mood-tracker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  align-items: stretch;   /* ✅ ensures equal box height */
+}
+
+/* Shared Card Style */
+.mood-card, 
+.mood-trends,
+.mood-history {
+  background: rgba(255, 255, 255, 0.35);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+.mood-card:hover, 
+.mood-trends:hover,
+.mood-history:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.mood-card h2, 
+.mood-trends h2,
+.mood-history h2 {
+  margin-bottom: 1.2rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+}
+
+/* Equal Box Sizes */
+.mood-card,
+.mood-trends {
+  min-height: 500px;   /* ✅ forces same size */
+  justify-content: space-between;
+}
+
+/* === Mood Emoji Options === */
+.mood-options {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mood-options input { display: none; }
+
+.mood-options label {
+  cursor: pointer;
+  font-size: 1.6rem;
+  padding: 0.6rem 1rem;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid #ccc;
+  transition: all 0.25s;
+}
+.mood-options input:checked + label {
+  background: #6c63ff;
+  color: #fff;
+  transform: scale(1.2);
+  border: 1px solid #5448d6;
+}
+
+/* === Influencer Tags === */
+.influencer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+.influencer-tags input { display: none; }
+
+.influencer-tags label span {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.influencer-tags input:checked + span {
+  background: #6c63ff;
+  color: #fff;
+  border-color: #5448d6;
+  font-weight: 600;
+}
+
+/* === Notes Textarea === */
+textarea {
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.9rem;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  background: rgba(255, 255, 255, 0.6);
+  transition: border 0.3s, box-shadow 0.3s;
+}
+textarea:focus {
+  border-color: #6c63ff;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.2);
+  outline: none;
+}
+
+/* === Buttons === */
+.form-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.btn.primary {
+  background: #6c63ff;
+  color: #fff;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.btn.primary:hover {
+  background: #5448d6;
+}
+.btn.secondary {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.btn.secondary:hover {
+  background: #f3f4f6;
+}
+
+/* === Mood Trends Chart === */
+.mood-trends canvas {
+  flex-grow: 1;
+  margin-top: 1rem;
+  width: 100%;
+  max-height: 300px;
+}
+
+/* === Mood History Table === */
+.mood-history {
+  margin-top: 2rem;
+}
+.mood-history table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.mood-history th, 
+.mood-history td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 0.95rem;
+}
+.mood-history th {
+  background: rgba(255,255,255,0.6);
+  font-weight: 600;
+}
+.mood-history tr:hover {
+  background: rgba(108,99,255,0.08);
+}
+
+/* === Responsive === */
+@media (max-width: 900px) {
+  .mood-tracker-grid {
+    grid-template-columns: 1fr;
+  }
+  .mood-card,
+  .mood-trends {
+    min-height: auto; /* allow natural sizing on mobile */
+  }
+}
+
+/* === Dashboard Page === */
+/* === Dashboard Page === */
+.dashboard-page {
+  padding: 2rem 5%;
+  min-height: 100vh;
+}
+
+/* Header centered */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+.dashboard-header h1 {
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+.dashboard-header p {
+  color: #555;
+  font-size: 1rem;
+}
+
+/* Grid layout - 2 columns */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Box style */
+.dashboard-box {
+  background: rgba(255,255,255,0.35);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-align: center; /* ✅ Center text like mood tracker */
+}
+.dashboard-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.dashboard-box h2 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+.dashboard-box .big-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #6c63ff;
+  margin: 0.5rem 0;
+}
+.dashboard-box .note {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: #eee;
+  border-radius: 6px;
+  margin: 0.8rem 0;
+}
+.progress-fill {
+  height: 100%;
+  background: #6c63ff;
+  border-radius: 6px;
+  transition: width 0.5s ease;
+}
+
+/* Severity Badges */
+.severity-badge {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.severity-badge.minimal { background: #d1fae5; color: #065f46; }
+.severity-badge.mild { background: #fef9c3; color: #92400e; }
+.severity-badge.moderate { background: #fde68a; color: #78350f; }
+.severity-badge.moderately\ severe,
+.severity-badge.moderately-severe { background: #fca5a5; color: #7f1d1d; }
+.severity-badge.severe { background: #ef4444; color: #fff; }
+
+/* Activity list inside box */
+.activity-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.activity {
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.activity.mood { background: #c5fad5; }
+.activity.screening { background: #e3f2fd; }
+.activity.chat { background: #fff3cd; }
+.activity .timestamp {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+/* Responsive: 1 column on small screens */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* === Screening Tests Page (like Dashboard) === */
+.screening-section {
+  min-height: 100vh;
+  text-align: center;
+  padding: 4rem 2rem 3rem 2rem; /* more top padding like dashboard */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.screening-section h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.screening-section .subtitle {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 3rem; /* space before grid */
+  max-width: 700px;
+}
+
+.screening-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  gap: 2rem;
+  max-width: 1100px;
+  width: 100%;
+}
+
+/* Card sizing */
+.screening-card {
+  width: 100%;
+  max-width: 320px;
+  min-height: 220px; /* ✅ keeps cards aligned */
+  background: rgba(255, 255, 255, 0.564);
+  border-radius: 12px;
+  padding: 1.6rem;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: transform 0.2s;
+}
+.screening-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1100px) {
+  .screening-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .screening-grid {
+    grid-template-columns: 1fr;
+  }
 }
