@@ -1,0 +1,57 @@
+{% extends "base_screening.html" %}
+{% load static %}
+
+{% block content %}
+<div class="chatbot-page">
+    <!-- Quick Topics Section -->
+    <div class="quick-topics">
+        <h3>💡 Quick Topics</h3>
+        <form method="POST" action="{% url 'chat' %}">
+            {% csrf_token %}
+            <button type="submit" name="message" value="I'm feeling anxious">Feeling anxious</button>
+            <button type="submit" name="message" value="I'm having trouble sleeping">Having trouble sleeping</button>
+            <button type="submit" name="message" value="I need help with stress management">Stress management</button>
+            <button type="submit" name="message" value="I'm feeling lonely">Feeling lonely</button>
+            <button type="submit" name="message" value="I have work stress">Work stress</button>
+            <button type="submit" name="message" value="I have a relationship issue">Relationship issue</button>
+        </form>
+    </div>
+
+    <!-- Chat Section -->
+    <div class="chat-section">
+        <div class="chat-header">
+            <h3>AI Support Chat</h3>
+            <p>Online • Anonymous • Confidential</p>
+        </div>
+
+        <div class="chat-box" id="chatBox">
+            {% for chat in chats reversed %}
+                <div class="chat-bubble user">
+                    <span class="message">{{ chat.message }}</span>
+                    <span class="timestamp">{{ chat.timestamp|time }}</span>
+                </div>
+                <div class="chat-bubble bot">
+                    <span class="message">{{ chat.response }}</span>
+                    <span class="timestamp">{{ chat.timestamp|time }}</span>
+                </div>
+            {% empty %}
+                <div class="welcome-message">
+                    <p>Hello! I'm here to provide emotional support and guidance. How are you feeling today?</p>
+                    <p class="disclaimer">This is an AI assistant, not a replacement for professional care.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Input form -->
+        <form method="POST" action="{% url 'chat' %}" class="chat-input" id="chatForm">
+            {% csrf_token %}
+            <input type="text" name="message" placeholder="Type your message.." required id="messageInput">
+            <button type="submit" id="sendButton">➤</button>
+        </form>
+        
+        <div class="chat-footer">
+            <p>This AI chatbot provides emotional support but is not a replacement for professional mental health care. If you're experiencing a crisis, please contact a mental health professional or emergency services.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
