@@ -52,7 +52,7 @@ class MoodEntry(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.mood} ({self.date_logged.date()})"
 
-
+# view chat message
 class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="chat_messages")
     message = models.TextField()
